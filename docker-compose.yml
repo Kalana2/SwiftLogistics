@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: swifttrack-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: swifttrack
+    networks:
+      - swifttrack-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: swifttrack-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - swifttrack-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: swifttrack-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - ORCHESTRATOR_URL=http://orchestration-service:3001
+    depends_on:
+      - orchestration-service
+    networks:
+      - swifttrack-network
+
+  orchestration-service:
+    build: ./orchestration-service
+    container_name: swifttrack-orchestrator
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/swifttrack
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - mongodb
+      - rabbitmq
+    networks:
+      - swifttrack-network
+
+  cms-adapter:
+    build: ./cms-adapter
+    container_name: swifttrack-cms-adapter
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - CMS_SOAP_URL=http://cms-mock:4000/cms/soap
+      - ORCHESTRATOR_URL=http://orchestration-service:3001
+    depends_on:
+      - rabbitmq
+      - cms-mock
+    networks:
+      - swifttrack-network
+
+  ros-adapter:
+    build: ./ros-adapter
+    container_name: swifttrack-ros-adapter
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - ORCHESTRATOR_URL=http://orchestration-service:3001
+    depends_on:
+      - rabbitmq
+    networks:
+      - swifttrack-network
+
+  wms-adapter:
+    build: ./wms-adapter
+    container_name: swifttrack-wms-adapter
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - WMS_TCP_HOST=wms-mock
+      - WMS_TCP_PORT=4001
+      - ORCHESTRATOR_URL=http://orchestration-service:3001
+    depends_on:
+      - rabbitmq
+      - wms-mock
+    networks:
+      - swifttrack-network
+
+  notification-service:
+    build: ./notification-service
+    container_name: swifttrack-notifications
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    networks:
+      - swifttrack-network
+
+  cms-mock:
+    build: ./mock-services/cms-mock
+    container_name: swifttrack-cms-mock
+    ports:
+      - "4000:4000"
+    networks:
+      - swifttrack-network
+
+  wms-mock:
+    build: ./mock-services/wms-mock
+    container_name: swifttrack-wms-mock
+    ports:
+      - "4001:4001"
+    networks:
+      - swifttrack-network
+
+networks:
+  swifttrack-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  rabbitmq_data:
