@@ -16,7 +16,7 @@ class WMSClient {
   connect() {
     return new Promise((resolve, reject) => {
       this.client = new net.Socket();
-
+      
       this.client.connect(this.port, this.host, () => {
         logger.info('Connected to WMS TCP server', {
           host: this.host,
@@ -50,11 +50,11 @@ class WMSClient {
       // Setup one-time data listener for this request
       const dataHandler = (data) => {
         responseData += data.toString();
-
+        
         // Check if we have a complete message (ends with delimiter)
         if (responseData.includes('\n')) {
           this.client.removeListener('data', dataHandler);
-
+          
           try {
             const response = JSON.parse(responseData.trim());
             resolve(response);
@@ -107,9 +107,9 @@ class WMSClient {
       };
 
       const response = await this.sendMessage(message);
-
+      
       this.close();
-
+      
       return response;
 
     } catch (error) {
@@ -136,9 +136,9 @@ class WMSClient {
       };
 
       const response = await this.sendMessage(message);
-
+      
       this.close();
-
+      
       return response;
 
     } catch (error) {
@@ -162,9 +162,9 @@ class WMSClient {
       };
 
       const response = await this.sendMessage(message);
-
+      
       this.close();
-
+      
       return response;
 
     } catch (error) {

@@ -51,4 +51,6 @@ class Logger {
   }
 }
 
-module.exports = Logger;
+function createLogger(serviceName) { return new Logger(serviceName); }
+
+module.exports = { Logger, createLogger };

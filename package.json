@@ -1,0 +1,33 @@
+{
+  "name": "swifttrack-middleware",
+  "version": "1.0.0",
+  "description": "Event-Driven Middleware for Legacy System Integration",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && npm run install:services",
+    "install:services": "cd shared && npm install && cd ../api-gateway && npm install && cd ../orchestration-service && npm install && cd ../cms-adapter && npm install && cd ../ros-adapter && npm install && cd ../wms-adapter && npm install && cd ../notification-service && npm install && cd ../mock-services/cms-mock && npm install && cd ../../mock-services/wms-mock && npm install",
+    "dev:gateway": "cd api-gateway && npm run dev",
+    "dev:orchestrator": "cd orchestration-service && npm run dev",
+    "dev:cms-adapter": "cd cms-adapter && npm run dev",
+    "dev:ros-adapter": "cd ros-adapter && npm run dev",
+    "dev:wms-adapter": "cd wms-adapter && npm run dev",
+    "dev:notification": "cd notification-service && npm run dev",
+    "dev:client": "cd client-ui && python3 -m http.server 5173",
+    "dev:cms-mock": "cd mock-services/cms-mock && npm run dev",
+    "dev:wms-mock": "cd mock-services/wms-mock && npm run dev",
+    "start:all": "concurrently \"npm run dev:gateway\" \"npm run dev:orchestrator\" \"npm run dev:cms-adapter\" \"npm run dev:ros-adapter\" \"npm run dev:wms-adapter\" \"npm run dev:notification\" \"npm run dev:cms-mock\" \"npm run dev:wms-mock\""
+  },
+  "keywords": [
+    "event-driven",
+    "microservices",
+    "legacy-integration",
+    "rabbitmq",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2"
+  }
+}

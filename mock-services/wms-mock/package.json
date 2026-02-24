@@ -1,0 +1,17 @@
+{
+  "name": "wms-mock",
+  "version": "1.0.0",
+  "description": "Mock TCP WMS Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

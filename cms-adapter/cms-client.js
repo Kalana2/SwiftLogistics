@@ -141,7 +141,7 @@ class CMSClient {
       items,
       totalAmount
     );
-
+    
     const response = await this.sendSOAPRequest(envelope);
 
     // Parse response
