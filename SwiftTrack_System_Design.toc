@@ -1,0 +1,57 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Problem Statement}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Solution Overview}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Key Objectives}{4}{subsection.1.3}%
+\contentsline {section}{\numberline {2}System Architecture}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Architectural Overview}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Technology Stack}{5}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Service Descriptions}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}API Gateway (Port 3000)}{6}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}API Endpoints}{6}{subsubsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.2}Orchestration Service (Port 3001)}{6}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Order Lifecycle}{7}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}MongoDB Schema}{7}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}RabbitMQ Message Architecture}{8}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Event Types}{8}{subsubsection.3.3.1}%
+\contentsline {section}{\numberline {4}Adapter Layer}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}CMS Adapter (Port 3002) — SOAP/XML Integration}{8}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}SOAP Request Flow}{9}{subsubsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.2}ROS Adapter (Port 3003) — REST Integration}{9}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Mock Route Calculation}{9}{subsubsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.3}WMS Adapter (Port 3004) — TCP Socket Integration}{10}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}TCP Protocol}{10}{subsubsection.4.3.1}%
+\contentsline {section}{\numberline {5}Notification Service (Port 3005)}{10}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Notification Channels}{10}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Client UI}{11}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Pages}{11}{subsection.6.1}%
+\contentsline {section}{\numberline {7}Data Flow}{11}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Complete Order Processing Flow}{11}{subsection.7.1}%
+\contentsline {section}{\numberline {8}Alternative Architecture Proposals}{12}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Alternative 1: Enterprise Service Bus (ESB)}{12}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Alternative 2: Serverless (FaaS) Architecture}{13}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Rationale for Selected Architecture}{13}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Transaction Management — Saga Pattern}{13}{section.9}%
+\contentsline {subsection}{\numberline {9.1}The Distributed Transaction Problem}{13}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Saga Execution Flow}{14}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Compensation Actions}{14}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Recovery Mechanisms}{15}{subsection.9.4}%
+\contentsline {section}{\numberline {10}Service Discovery}{15}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Service Registry Architecture}{15}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Health Check Mechanism}{15}{subsection.10.2}%
+\contentsline {section}{\numberline {11}Proof of Delivery}{16}{section.11}%
+\contentsline {section}{\numberline {12}Design Patterns}{16}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Adapter Pattern}{16}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Saga Pattern (Orchestration-based)}{16}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}Event-Driven Architecture}{16}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}API Gateway Pattern}{16}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}Service Registry Pattern}{17}{subsection.12.5}%
+\contentsline {section}{\numberline {13}Security}{17}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Authentication \& Authorization}{17}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Transport Security}{17}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Rate Limiting \& DDoS Protection}{17}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Input Validation \& Sanitization}{17}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}Secret Management}{17}{subsection.13.5}%
+\contentsline {section}{\numberline {14}Deployment}{18}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Docker Compose}{18}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Port Allocation}{18}{subsection.14.2}%
+\contentsline {section}{\numberline {15}Conclusion}{18}{section.15}%

@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
     stack: err.stack,
     path: req.path
   });
-  
+
   res.status(err.status || 500).json({
     success: false,
     error: 'Internal server error',
@@ -81,12 +81,37 @@ app.use((err, req, res, next) => {
   });
 });
 
+const { registry } = require('../shared/utils/service-registry');
+
 const PORT = process.env.PORT || 3000;
+
+// Service Discovery endpoint
+app.get('/api/services', (req, res) => {
+  res.json({
+    success: true,
+    services: registry.getAllServices(),
+    timestamp: new Date().toISOString()
+  });
+});
 
 app.listen(PORT, () => {
   logger.info(`API Gateway running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV}`);
   logger.info(`CORS enabled for: ${process.env.CORS_ORIGIN}`);
+
+  // Register all known services in the registry
+  registry.register('api-gateway', 'localhost', PORT);
+  registry.register('orchestration-service', 'localhost', process.env.ORCHESTRATOR_PORT || 3001);
+  registry.register('cms-adapter', 'localhost', 3002);
+  registry.register('ros-adapter', 'localhost', 3003);
+  registry.register('wms-adapter', 'localhost', 3004);
+  registry.register('notification-service', 'localhost', 3005);
+  registry.register('cms-mock', 'localhost', 4000);
+  registry.register('wms-mock', 'localhost', 4001);
+
+  // Start health check monitoring
+  registry.startHealthChecks(10000);
+  logger.info('Service discovery registry initialized with 8 services');
 });
 
 // Graceful shutdown

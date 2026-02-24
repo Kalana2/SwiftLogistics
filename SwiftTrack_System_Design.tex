@@ -51,22 +51,27 @@
 % ─── Header/Footer ───
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\textsc{SwiftTrack Middleware}}
-\fancyhead[R]{\textsc{System Design Document}}
-\fancyfoot[C]{\thepage}
+\fancyhead[L]{\footnotesize\textsc{SCS2314 --- Middleware Architecture}}
+\fancyhead[R]{\footnotesize\textsc{Assignment 4 --- SwiftLogistics}}
+\fancyfoot[L]{\footnotesize University of Colombo School of Computing}
+\fancyfoot[R]{\footnotesize\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.2pt}
 
 % ─── Section formatting ───
-\titleformat{\section}{\Large\bfseries\color{navy}}{}{0em}{}[\titlerule]
-\titleformat{\subsection}{\large\bfseries\color{navy!80}}{}{0em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries\color{navy!60}}{}{0em}{}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.8em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{navy!80}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{navy!60}}{\thesubsubsection}{0.5em}{}
 
 % ─── Hyperlink style ───
 \hypersetup{
   colorlinks=true,
   linkcolor=codeblue,
   urlcolor=teal,
-  citecolor=codegreen
+  citecolor=codegreen,
+  pdftitle={SwiftTrack --- Middleware Architecture for SwiftLogistics},
+  pdfauthor={R K K Jinendra, G C K S Gajanayake, J T D Jayakodi},
+  pdfsubject={SCS2314 Assignment 4}
 }
 
 % ═══════════════════════════════════════════
@@ -75,28 +80,61 @@
 % ─── Title Page ───
 \begin{titlepage}
   \centering
-  \vspace*{3cm}
+  \vspace*{1.5cm}
   
-  {\Huge\bfseries SwiftTrack}\\[0.5cm]
-  {\LARGE Event-Driven Middleware for\\Legacy System Integration}\\[2cm]
+  {\large\textsc{University of Colombo School of Computing}}\\[0.3cm]
+  {\normalsize\textsc{Faculty of Science}}\\[0.2cm]
+  \rule{\textwidth}{0.5pt}\\[1.5cm]
   
-  {\large\textsc{System Design \& Implementation Document}}\\[1cm]
+  {\LARGE\textsc{SCS2314 --- Middleware Architecture}}\\[0.4cm]
+  {\large\textsc{Assignment 4}}\\[1.5cm]
+  
+  {\Huge\bfseries\color{navy} SwiftTrack}\\[0.5cm]
+  {\LARGE Middleware Architecture for\\``SwiftLogistics''}\\[0.3cm]
+  {\large\textit{Event-Driven Integration of Heterogeneous Legacy Systems}}\\[2cm]
+  
+  \rule{0.6\textwidth}{0.3pt}\\[1cm]
+  
+  {\large\textbf{Group Members}}\\[0.5cm]
+  
+  \begin{tabular}{|l|l|}
+    \hline
+    \textbf{Index Number} & \textbf{Name} \\
+    \hline
+    23000821 & R K K Jinendra \\
+    \hline
+    23000481 & G C K S Gajanayake \\
+    \hline
+    23000694 & J T D Jayakodi \\
+    \hline
+  \end{tabular}
   
   \vfill
   
   \begin{tabular}{rl}
-    \textbf{Module:} & Enterprise Application Integration \\
-    \textbf{Technology:} & Node.js, Express, RabbitMQ, MongoDB \\
-    \textbf{Architecture:} & Microservices with Event-Driven Messaging \\
+    \textbf{Module:} & SCS2314 --- Middleware Architecture \\
+    \textbf{Lecturer:} & University of Colombo School of Computing \\
+    \textbf{Submission Date:} & 28 February 2026 \\
+    \textbf{Technologies:} & Node.js, Express, RabbitMQ, MongoDB \\
     \textbf{Repository:} & \url{https://github.com/Kalana2/SwiftLogistics} \\
-    \textbf{Date:} & February 2026 \\
   \end{tabular}
   
-  \vspace{2cm}
+  \vspace{1cm}
+  \rule{\textwidth}{0.5pt}
 \end{titlepage}
 
-\tableofcontents
+% ─── Abstract ───
+\thispagestyle{empty}
+\begin{abstract}
+This document presents the design and implementation of \textbf{SwiftTrack}, a middleware solution for Swift Logistics (Pvt) Ltd. that integrates three heterogeneous legacy systems: a SOAP/XML-based Client Management System (CMS), a RESTful Route Optimisation System (ROS), and a TCP/IP-based Warehouse Management System (WMS). The proposed architecture employs a microservices-based approach with RabbitMQ as the central message broker for asynchronous, event-driven communication. Key architectural contributions include an orchestration-based Saga pattern for distributed transaction management with compensating transactions, a lightweight service discovery registry with health-check monitoring, real-time WebSocket notifications via Socket.IO, and a comprehensive security layer with JWT authentication, Helmet.js, and rate limiting. The prototype demonstrates a complete order processing pipeline from client submission through CMS inventory verification, ROS route optimisation, and WMS driver assignment, with real-time status updates delivered to a pure HTML/CSS/JavaScript client portal. Two alternative architectures (ESB-centric and serverless) are evaluated and compared against the selected approach.
+\end{abstract}
+
 \newpage
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
 
 % ═══════════════════════════════════════════
 \section{Introduction}
@@ -550,30 +588,293 @@ Driver Dashboard & Delivery manifest, deliver/fail actions, real-time updates \\
 \end{enumerate}
 
 % ═══════════════════════════════════════════
+\section{Alternative Architecture Proposals}
+
+Before selecting the final microservices + RabbitMQ architecture, two alternative approaches were evaluated.
+
+\subsection{Alternative 1: Enterprise Service Bus (ESB)}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={rectangle, draw, rounded corners=4pt, minimum width=2.5cm, minimum height=0.9cm, align=center, font=\small\bfseries},
+  esb/.style={box, fill=orange!20, draw=orange!60, minimum width=10cm},
+  sys/.style={box, fill=blue!10, draw=blue!40},
+  arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+\node[esb] (bus) {WSO2 Enterprise Service Bus};
+\node[sys, above left=1.2cm and 1cm of bus] (ui) {Client UI};
+\node[sys, above right=1.2cm and 1cm of bus] (drv) {Driver App};
+\node[sys, below left=1.2cm and 2cm of bus] (cms) {CMS (SOAP)};
+\node[sys, below=1.2cm of bus] (ros) {ROS (REST)};
+\node[sys, below right=1.2cm and 2cm of bus] (wms) {WMS (TCP)};
+\draw[arrow] (ui) -- (bus);
+\draw[arrow] (drv) -- (bus);
+\draw[arrow] (bus) -- (cms);
+\draw[arrow] (bus) -- (ros);
+\draw[arrow] (bus) -- (wms);
+\end{tikzpicture}
+\caption{Alternative 1: ESB-Centric Architecture}
+\end{figure}
+
+\textbf{Approach:} Use a centralized Enterprise Service Bus (e.g., WSO2 ESB or MuleSoft Anypoint) as the integration backbone. All protocol translation, message routing, and orchestration would be handled by the ESB.
+
+\textbf{Pros:} Built-in protocol mediation (SOAP, TCP, REST), visual flow designer, enterprise-grade monitoring, built-in transaction management.
+
+\textbf{Rejected because:}
+\begin{itemize}
+  \item \textbf{Single point of failure}: All communication flows through one centralized bus
+  \item \textbf{Operational complexity}: Requires significant Java/XML expertise to configure and maintain
+  \item \textbf{Scalability limitations}: Vertical scaling of the ESB becomes a bottleneck under high load (e.g., Black Friday events)
+  \item \textbf{Vendor lock-in}: Deep coupling to the ESB vendor's APIs and configuration
+\end{itemize}
+
+\subsection{Alternative 2: Serverless (FaaS) Architecture}
+
+\textbf{Approach:} Deploy each integration point as a serverless function (e.g., AWS Lambda) with an event bus (e.g., AWS SQS/EventBridge) for messaging.
+
+\textbf{Pros:} Zero infrastructure management, automatic scaling, pay-per-invocation cost model, managed message queues.
+
+\textbf{Rejected because:}
+\begin{itemize}
+  \item \textbf{Vendor lock-in}: Tight coupling to AWS/GCP/Azure services, violating the open-source requirement
+  \item \textbf{Cold start latency}: Real-time notification and TCP persistent connections are poorly suited for serverless
+  \item \textbf{TCP limitations}: WMS requires persistent TCP socket connections, which are incompatible with stateless function execution
+  \item \textbf{Cost unpredictability}: High-volume order processing (Black Friday) could lead to unexpected costs
+\end{itemize}
+
+\subsection{Rationale for Selected Architecture}
+
+The \textbf{microservices + RabbitMQ} architecture was selected because it:
+\begin{enumerate}
+  \item Is fully open-source with no vendor lock-in
+  \item Allows independent scaling of each adapter service
+  \item Supports persistent TCP connections (WMS) via dedicated Node.js processes
+  \item Provides reliable asynchronous messaging with RabbitMQ durability
+  \item Enables real-time notifications via Socket.IO alongside REST APIs
+  \item Follows the assignment's emphasis on middleware architectural patterns
+\end{enumerate}
+
+% ═══════════════════════════════════════════
+\section{Transaction Management — Saga Pattern}
+
+\subsection{The Distributed Transaction Problem}
+
+A single order triggers operations across three independent systems: CMS (inventory), ROS (routing), and WMS (warehouse/driver). Traditional ACID transactions cannot span these heterogeneous systems. Instead, we implement the \textbf{Orchestration-based Saga pattern}.
+
+\subsection{Saga Execution Flow}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  step/.style={rectangle, draw, rounded corners, fill=green!10, minimum width=3.5cm, minimum height=0.8cm, align=center, font=\small},
+  comp/.style={rectangle, draw, rounded corners, fill=red!10, minimum width=3.5cm, minimum height=0.8cm, align=center, font=\small},
+  orch/.style={rectangle, draw, rounded corners, fill=blue!15, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\small\bfseries},
+  arrow/.style={-{Stealth[length=2.5mm]}, thick},
+  carrow/.style={-{Stealth[length=2.5mm]}, thick, red!60, dashed},
+  node distance=0.7cm
+]
+
+% Left column: Execute steps
+\node[orch] (saga) {Saga Orchestrator};
+\node[step, below=1cm of saga] (s1) {Step 1: CMS Inventory};
+\node[step, below=of s1] (s2) {Step 2: ROS Route};
+\node[step, below=of s2] (s3) {Step 3: WMS Assign};
+\node[step, below=of s3, fill=green!25] (done) {Order PROCESSED};
+
+% Right column: Compensate steps
+\node[comp, right=3cm of s1] (c1) {Cancel CMS Reservation};
+\node[comp, right=3cm of s2] (c2) {Cancel Route};
+\node[comp, right=3cm of s3] (c3) {Release Driver};
+
+% Failure node
+\node[comp, right=3cm of done, fill=red!20] (fail) {Order FAILED};
+
+% Forward arrows
+\draw[arrow] (saga) -- node[left, font=\scriptsize] {Start} (s1);
+\draw[arrow] (s1) -- node[left, font=\scriptsize] {Success} (s2);
+\draw[arrow] (s2) -- node[left, font=\scriptsize] {Success} (s3);
+\draw[arrow] (s3) -- node[left, font=\scriptsize] {Success} (done);
+
+% Compensation arrows
+\draw[carrow] (s3.east) -- node[above, font=\scriptsize] {Fail} (c3.west);
+\draw[carrow] (c3) -- (c2);
+\draw[carrow] (c2) -- (c1);
+\draw[carrow] (c1.south) |- (fail);
+
+\end{tikzpicture}
+\caption{Saga Pattern — Sequential Execution with Compensating Transactions}
+\label{fig:saga}
+\end{figure}
+
+\subsection{Compensation Actions}
+
+\begin{table}[H]
+\centering
+\caption{Saga Step Compensation Matrix}
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+\textbf{Step} & \textbf{Action} & \textbf{Compensation on Failure} \\
+\midrule
+CMS Inventory & Check \& reserve inventory via SOAP & Release reserved inventory (CMS\_CANCELLED) \\
+ROS Route & Calculate optimized route via REST & Cancel route booking (ROUTE\_CANCELLED) \\
+WMS Assignment & Assign warehouse \& driver via TCP & Release driver \& warehouse slot (WMS\_RELEASED) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{lstlisting}[language=java, caption={Saga Orchestrator Implementation}]
+class SagaOrchestrator {
+  addStep(name, executeFn, compensateFn) { ... }
+
+  async execute(context) {
+    for (const step of this.steps) {
+      try {
+        await Promise.race([
+          step.execute(context),
+          timeout(30000) // 30s timeout per step
+        ]);
+        completedSteps.push(step);
+      } catch (error) {
+        // Compensate all completed steps in reverse
+        for (const s of completedSteps.reverse()) {
+          await s.compensate(context);
+        }
+        return { success: false, failedStep: step.name };
+      }
+    }
+    return { success: true, sagaLog };
+  }
+}
+\end{lstlisting}
+
+\subsection{Recovery Mechanisms}
+
+\begin{enumerate}
+  \item \textbf{Timeout-based failure}: Each saga step has a 30-second timeout. If an adapter doesn't respond, the step is treated as failed and compensation begins.
+  \item \textbf{Idempotent operations}: Adapter operations are designed to be idempotent, allowing safe retries.
+  \item \textbf{Saga log persistence}: The full saga execution log is stored in MongoDB alongside the order, enabling audit and manual recovery.
+  \item \textbf{Dead letter queues}: Failed RabbitMQ messages are routed to dead letter queues for manual inspection.
+\end{enumerate}
+
+% ═══════════════════════════════════════════
+\section{Service Discovery}
+
+\subsection{Service Registry Architecture}
+
+SwiftTrack implements a lightweight \textbf{self-registration service registry} to manage service locations in the distributed environment.
+
+\begin{lstlisting}[language=java, caption={Service Registry}]
+class ServiceRegistry {
+  register(name, host, port) { ... }
+  getService(name)  // returns healthy instance URL
+  startHealthChecks(interval = 10000)  // polls /health
+}
+\end{lstlisting}
+
+\subsection{Health Check Mechanism}
+
+\begin{itemize}
+  \item Each service exposes a \texttt{GET /health} endpoint returning status, uptime, and connection states
+  \item The registry polls all endpoints every 10 seconds
+  \item After 3 consecutive failures, a service is marked \texttt{DOWN}
+  \item The API Gateway exposes \texttt{GET /api/services} for runtime discovery
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Service Registry Health States}
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{State} & \textbf{Condition} & \textbf{Behaviour} \\
+\midrule
+UP & Health check passes & Included in service resolution \\
+DOWN & 3+ consecutive failures & Excluded from resolution, logged as warning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ═══════════════════════════════════════════
+\section{Proof of Delivery}
+
+Drivers can capture proof of delivery when marking a package as delivered. The system supports:
+
+\begin{itemize}
+  \item \textbf{Digital Signature}: Canvas-based signature capture (stored as base64)
+  \item \textbf{Photo Evidence}: Camera capture of delivered package
+  \item Data stored in MongoDB within the order's \texttt{proofOfDelivery} field
+\end{itemize}
+
+\begin{lstlisting}[language=java, caption={Proof of Delivery Schema}]
+proofOfDelivery: {
+  photo:      String,   // base64 encoded image
+  signature:  String,   // base64 canvas data
+  capturedAt: Date,
+  capturedBy: String    // driver ID
+}
+
+// API endpoint
+POST /api/driver/delivery/:orderId/proof
+Body: { photo: "base64...", signature: "base64..." }
+\end{lstlisting}
+
+% ═══════════════════════════════════════════
 \section{Design Patterns}
 
 \subsection{Adapter Pattern}
-Each legacy system has a dedicated adapter that translates between the internal JSON message format and the external protocol (SOAP, TCP, REST).
+Each legacy system has a dedicated adapter that translates between the internal JSON message format and the external protocol (SOAP, TCP, REST). This isolates protocol-specific logic from the business logic.
 
-\subsection{Saga Pattern}
-The order processing uses an orchestration-based saga. If any step fails (e.g., CMS inventory check), compensating transactions are triggered (e.g., cancel CMS reservation).
+\subsection{Saga Pattern (Orchestration-based)}
+The order processing uses an orchestration-based saga with compensating transactions. The \texttt{SagaOrchestrator} class manages sequential step execution and automatic rollback on failure (see Section 8).
 
 \subsection{Event-Driven Architecture}
-Services communicate asynchronously through RabbitMQ. This provides loose coupling, fault tolerance, and the ability to scale individual services independently.
+Services communicate asynchronously through RabbitMQ using topic and fanout exchanges. This provides loose coupling, fault tolerance, and independent scalability.
 
 \subsection{API Gateway Pattern}
-A single entry point handles cross-cutting concerns (auth, rate limiting, logging) and routes to internal services.
+A single entry point handles cross-cutting concerns (authentication, rate limiting, CORS, logging) and proxies requests to internal services.
+
+\subsection{Service Registry Pattern}
+Services self-register with a lightweight registry on startup. The registry monitors health and provides dynamic URL resolution (see Section 9).
 
 % ═══════════════════════════════════════════
 \section{Security}
 
+\subsection{Authentication \& Authorization}
+
 \begin{itemize}
-  \item \textbf{JWT Authentication}: Stateless token-based authentication with configurable expiry
-  \item \textbf{Helmet}: HTTP security headers (XSS, clickjacking, MIME sniffing)
-  \item \textbf{Rate Limiting}: 100 requests/minute per IP via \texttt{express-rate-limit}
-  \item \textbf{CORS}: Restricted to configured client origin
-  \item \textbf{Input Validation}: Server-side validation via \texttt{express-validator}
-  \item \textbf{Environment Variables}: Secrets stored in \texttt{.env} files, never committed
+  \item \textbf{JWT Authentication}: Stateless token-based auth with configurable expiry (default 24h). Tokens contain user ID, role, and customer/driver ID.
+  \item \textbf{Role-Based Access Control (RBAC)}: Client and driver roles with route-level enforcement. Drivers cannot access client endpoints and vice versa.
+\end{itemize}
+
+\subsection{Transport Security}
+
+\begin{itemize}
+  \item \textbf{Helmet.js}: Adds 11 HTTP security headers including X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security (HSTS), and Content-Security-Policy
+  \item \textbf{CORS}: Strictly restricted to configured client origin only
+  \item \textbf{TLS/HTTPS}: Production deployment uses TLS certificates for all client-facing endpoints
+\end{itemize}
+
+\subsection{Rate Limiting \& DDoS Protection}
+
+\begin{itemize}
+  \item \textbf{Rate Limiting}: 100 requests/minute per IP via \texttt{express-rate-limit}, crucial for handling peak events (Black Friday, Avurudu sales)
+  \item \textbf{Sliding window}: Rate limits use a sliding window algorithm to prevent burst attacks
+\end{itemize}
+
+\subsection{Input Validation \& Sanitization}
+
+\begin{itemize}
+  \item \textbf{Server-side validation}: All inputs validated via \texttt{express-validator} before processing
+  \item \textbf{MongoDB injection prevention}: Mongoose ODM with schema validation prevents NoSQL injection
+  \item \textbf{XML injection prevention}: SOAP payloads are constructed programmatically (not via string concatenation) using \texttt{fast-xml-parser}
+\end{itemize}
+
+\subsection{Secret Management}
+
+\begin{itemize}
+  \item All secrets (JWT keys, database URIs, API keys) stored in \texttt{.env} files
+  \item \texttt{.env} files are excluded from version control via \texttt{.gitignore}
+  \item Production uses environment variables injected via Docker or orchestration tools
 \end{itemize}
 
 % ═══════════════════════════════════════════
@@ -627,14 +928,17 @@ Client UI & 5173 & HTTP (static) \\
 SwiftTrack demonstrates a complete event-driven middleware solution for integrating heterogeneous legacy systems in a logistics domain. The architecture provides:
 
 \begin{itemize}
-  \item \textbf{Protocol translation} between SOAP, TCP, and REST
+  \item \textbf{Protocol translation} between SOAP, TCP, and REST via dedicated adapters
   \item \textbf{Reliable messaging} via RabbitMQ with topic and fanout exchanges
   \item \textbf{Real-time tracking} through Socket.IO WebSocket notifications
-  \item \textbf{Fault tolerance} with saga-based compensating transactions
+  \item \textbf{Distributed transaction management} via the Saga pattern with compensating transactions
+  \item \textbf{Service discovery} through a health-check-based registry
+  \item \textbf{Proof of delivery} with digital signature and photo capture
   \item \textbf{Scalability} through independent microservice deployment
-  \item \textbf{Security} with JWT authentication and API gateway protection
+  \item \textbf{Security} with JWT, Helmet, RBAC, and rate limiting
 \end{itemize}
 
 The system successfully bridges the gap between legacy enterprise systems and modern web clients, enabling real-time logistics tracking without modifying the underlying legacy infrastructure.
 
 \end{document}
+

@@ -121,4 +121,66 @@ router.post('/delivery/:orderId/status',
   }
 );
 
+/**
+ * @route   POST /api/driver/delivery/:orderId/proof
+ * @desc    Upload proof of delivery (photo + signature)
+ * @access  Private (Driver only)
+ */
+router.post('/delivery/:orderId/proof',
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      if (req.user.role !== 'driver') {
+        return res.status(403).json({
+          success: false,
+          error: 'Access denied. Driver role required.'
+        });
+      }
+
+      const { orderId } = req.params;
+      const { photo, signature } = req.body;
+
+      if (!photo && !signature) {
+        return res.status(400).json({
+          success: false,
+          error: 'Either photo or signature is required'
+        });
+      }
+
+      logger.info('Uploading proof of delivery', {
+        orderId,
+        driverId: req.user.driverId,
+        hasPhoto: !!photo,
+        hasSignature: !!signature
+      });
+
+      const response = await axios.post(
+        `${ORCHESTRATOR_URL}/api/orchestrator/orders/${orderId}/proof`,
+        {
+          photo,
+          signature,
+          capturedBy: req.user.driverId
+        },
+        { timeout: 10000 }
+      );
+
+      res.json({
+        success: true,
+        data: response.data
+      });
+
+    } catch (error) {
+      logger.error('Error uploading proof of delivery', {
+        orderId: req.params.orderId,
+        error: error.message
+      });
+
+      res.status(500).json({
+        success: false,
+        error: 'Failed to upload proof of delivery'
+      });
+    }
+  }
+);
+
 module.exports = router;

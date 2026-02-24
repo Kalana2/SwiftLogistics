@@ -37,13 +37,18 @@ const orderSchema = new mongoose.Schema({
       'PENDING',
       'PROCESSING',
       'CMS_CONFIRMED',
+      'ROUTE_CALCULATING',
       'ROUTE_CALCULATED',
+      'WMS_ASSIGNING',
       'WMS_ASSIGNED',
       'PROCESSED',
       'IN_TRANSIT',
       'DELIVERED',
       'FAILED',
-      'CANCELLED'
+      'CANCELLED',
+      'CMS_CANCELLED',
+      'ROUTE_CANCELLED',
+      'WMS_RELEASED'
     ],
     default: 'RECEIVED',
     index: true
@@ -61,8 +66,22 @@ const orderSchema = new mongoose.Schema({
     submittedBy: String,
     submittedAt: Date,
     completedAt: Date,
-    failureReason: String
+    failureReason: String,
+    compensatedAt: String
   },
+  proofOfDelivery: {
+    photo: String,
+    signature: String,
+    capturedAt: Date,
+    capturedBy: String
+  },
+  sagaLog: [{
+    step: String,
+    status: String,
+    error: String,
+    duration: Number,
+    timestamp: Date
+  }],
   statusHistory: [{
     status: String,
     timestamp: { type: Date, default: Date.now },
@@ -74,7 +93,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Add status to history before saving
-orderSchema.pre('save', function(next) {
+orderSchema.pre('save', function (next) {
   if (this.isModified('status')) {
     this.statusHistory.push({
       status: this.status,
@@ -86,7 +105,7 @@ orderSchema.pre('save', function(next) {
 });
 
 // Instance method to update status
-orderSchema.methods.updateStatus = function(newStatus, message, source) {
+orderSchema.methods.updateStatus = function (newStatus, message, source) {
   this.status = newStatus;
   this.statusHistory.push({
     status: newStatus,

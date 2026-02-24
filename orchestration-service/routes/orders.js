@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const Order = require('../models/Order');
 const { createLogger } = require('../../shared/utils/logger');
 const { EventTypes, Event } = require('../../shared/models/Event');
+const { createOrderProcessingSaga } = require('../saga');
 
 const router = express.Router();
 const logger = createLogger('orchestration-orders');
@@ -14,7 +15,7 @@ const logger = createLogger('orchestration-orders');
  */
 router.post('/orders', async (req, res) => {
   const rabbitMQ = req.app.locals.rabbitMQ;
-  
+
   try {
     const { customerId, items, deliveryAddress, metadata } = req.body;
 
@@ -49,13 +50,13 @@ router.post('/orders', async (req, res) => {
     // 1. Persist to MongoDB immediately (ensures data consistency)
     const order = new Order(orderData);
     await order.save();
-    
+
     logger.info('Order persisted to database', { orderId });
 
     // 2. Update status to PENDING
     await order.updateStatus('PENDING', 'Order queued for processing', 'orchestrator');
 
-    // 3. Publish to RabbitMQ for async processing
+    // 3. Publish to RabbitMQ for async processing by adapters
     const orderEvent = new Event(EventTypes.ORDER_RECEIVED, {
       orderId: order.orderId,
       customerId: order.customerId,
@@ -64,13 +65,43 @@ router.post('/orders', async (req, res) => {
       totalAmount: order.totalAmount
     });
 
-    // Publish to all adapters in parallel via different routing keys
+    // Publish to adapters (they consume asynchronously)
     await rabbitMQ.publishToOrderExchange('order.new', orderEvent.toJSON());
     await rabbitMQ.publishToOrderExchange('order.cms', orderEvent.toJSON());
     await rabbitMQ.publishToOrderExchange('order.ros', orderEvent.toJSON());
     await rabbitMQ.publishToOrderExchange('order.wms', orderEvent.toJSON());
 
     logger.info('Order published to RabbitMQ', { orderId });
+
+    // 4. Execute Saga — sequential CMS → ROS → WMS with compensation
+    const ORCHESTRATOR_URL = process.env.SELF_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const saga = createOrderProcessingSaga(ORCHESTRATOR_URL);
+    const sagaResult = await saga.execute({
+      orderId: order.orderId,
+      customerId: order.customerId,
+      items: order.items,
+      deliveryAddress: order.deliveryAddress
+    });
+
+    // 5. Save saga execution log to order
+    order.sagaLog = (sagaResult.sagaLog || []).map(entry => ({
+      step: entry.step,
+      status: entry.status,
+      error: entry.error,
+      duration: entry.duration,
+      timestamp: entry.timestamp
+    }));
+
+    if (!sagaResult.success) {
+      await order.updateStatus(
+        'FAILED',
+        `Saga failed at step: ${sagaResult.failedStep} — ${sagaResult.error}`,
+        'saga-orchestrator'
+      );
+      logger.error('Saga failed', { orderId, failedStep: sagaResult.failedStep });
+    }
+
+    await order.save();
 
     // Publish notification event
     await rabbitMQ.publishToEventExchange({
@@ -83,13 +114,17 @@ router.post('/orders', async (req, res) => {
       }
     });
 
-    // 4. Return 202 Accepted (Non-blocking response)
+    // 6. Return 202 Accepted (Non-blocking response)
     res.status(202).json({
       success: true,
       message: 'Order received and is being processed',
       orderId: order.orderId,
       status: order.status,
-      estimatedProcessingTime: '2-5 minutes'
+      estimatedProcessingTime: '2-5 minutes',
+      sagaResult: {
+        success: sagaResult.success,
+        failedStep: sagaResult.failedStep || null
+      }
     });
 
   } catch (error) {
@@ -182,7 +217,7 @@ router.get('/orders', async (req, res) => {
  */
 router.put('/orders/:orderId/status', async (req, res) => {
   const rabbitMQ = req.app.locals.rabbitMQ;
-  
+
   try {
     const { orderId } = req.params;
     const { status, message, source, metadata } = req.body;
@@ -245,7 +280,7 @@ router.put('/orders/:orderId/status', async (req, res) => {
  */
 router.post('/orders/:orderId/delivery-status', async (req, res) => {
   const rabbitMQ = req.app.locals.rabbitMQ;
-  
+
   try {
     const { orderId } = req.params;
     const { driverId, status, location, notes } = req.body;
@@ -333,6 +368,39 @@ router.get('/driver/:driverId/manifest', async (req, res) => {
       success: false,
       error: 'Failed to fetch manifest'
     });
+  }
+});
+
+/**
+ * @route   POST /api/orchestrator/orders/:orderId/proof
+ * @desc    Store proof of delivery (photo + signature)
+ * @access  Internal (from API Gateway)
+ */
+router.post('/orders/:orderId/proof', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { photo, signature, capturedBy } = req.body;
+
+    const order = await Order.findOne({ orderId });
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found' });
+    }
+
+    order.proofOfDelivery = {
+      photo: photo || null,
+      signature: signature || null,
+      capturedAt: new Date(),
+      capturedBy: capturedBy || 'driver'
+    };
+
+    await order.save();
+
+    logger.info('Proof of delivery stored', { orderId, hasPhoto: !!photo, hasSig: !!signature });
+
+    res.json({ success: true, message: 'Proof of delivery recorded', data: order.proofOfDelivery });
+  } catch (error) {
+    logger.error('Error storing proof of delivery:', error);
+    res.status(500).json({ success: false, error: 'Failed to store proof' });
   }
 });
 

@@ -1,0 +1,90 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{4}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Problem Statement}{4}{subsection.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Solution Overview}{4}{subsection.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Key Objectives}{4}{subsection.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}System Architecture}{4}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Architectural Overview}{5}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces SwiftTrack System Architecture}}{5}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{5}{SwiftTrack System Architecture}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Technology Stack}{5}{subsection.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Technology Stack}}{5}{table.caption.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Service Descriptions}{6}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}API Gateway (Port 3000)}{6}{subsection.3.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces JWT Authentication Middleware}}{6}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}API Endpoints}{6}{subsubsection.3.1.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces API Gateway Route Map}}{6}{table.caption.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Orchestration Service (Port 3001)}{6}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Order Lifecycle}{7}{subsubsection.3.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Order Status State Machine}}{7}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:lifecycle}{{2}{7}{Order Status State Machine}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}MongoDB Schema}{7}{subsubsection.3.2.2}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Mongoose Order Schema}}{7}{lstlisting.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}RabbitMQ Message Architecture}{8}{subsection.3.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces RabbitMQ Exchanges and Queues}}{8}{table.caption.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Message Queues}}{8}{table.caption.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Event Types}{8}{subsubsection.3.3.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Event Type Definitions}}{8}{lstlisting.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Adapter Layer}{8}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}CMS Adapter (Port 3002) — SOAP/XML Integration}{8}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}SOAP Request Flow}{9}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {4}{\ignorespaces SOAP Inventory Check Request}}{9}{lstlisting.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}ROS Adapter (Port 3003) — REST Integration}{9}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}Mock Route Calculation}{9}{subsubsection.4.2.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {5}{\ignorespaces Mock Route Calculation}}{9}{lstlisting.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}WMS Adapter (Port 3004) — TCP Socket Integration}{10}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}TCP Protocol}{10}{subsubsection.4.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces WMS TCP Message Types}}{10}{table.caption.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {6}{\ignorespaces TCP Client Connection}}{10}{lstlisting.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Notification Service (Port 3005)}{10}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Notification Channels}{10}{subsection.5.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {7}{\ignorespaces Socket.IO Event Broadcasting}}{10}{lstlisting.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Client UI}{11}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Pages}{11}{subsection.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces UI Pages}}{11}{table.caption.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Data Flow}{11}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Complete Order Processing Flow}{11}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Alternative Architecture Proposals}{12}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Alternative 1: Enterprise Service Bus (ESB)}{12}{subsection.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Alternative 1: ESB-Centric Architecture}}{12}{figure.caption.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Alternative 2: Serverless (FaaS) Architecture}{13}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Rationale for Selected Architecture}{13}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Transaction Management — Saga Pattern}{13}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}The Distributed Transaction Problem}{13}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Saga Execution Flow}{14}{subsection.9.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Saga Pattern — Sequential Execution with Compensating Transactions}}{14}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:saga}{{4}{14}{Saga Pattern — Sequential Execution with Compensating Transactions}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Compensation Actions}{14}{subsection.9.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Saga Step Compensation Matrix}}{14}{table.caption.11}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {8}{\ignorespaces Saga Orchestrator Implementation}}{14}{lstlisting.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Recovery Mechanisms}{15}{subsection.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Service Discovery}{15}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.1}Service Registry Architecture}{15}{subsection.10.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {9}{\ignorespaces Service Registry}}{15}{lstlisting.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {10.2}Health Check Mechanism}{15}{subsection.10.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Service Registry Health States}}{15}{table.caption.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {11}Proof of Delivery}{16}{section.11}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}{\ignorespaces Proof of Delivery Schema}}{16}{lstlisting.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {12}Design Patterns}{16}{section.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.1}Adapter Pattern}{16}{subsection.12.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.2}Saga Pattern (Orchestration-based)}{16}{subsection.12.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.3}Event-Driven Architecture}{16}{subsection.12.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.4}API Gateway Pattern}{16}{subsection.12.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {12.5}Service Registry Pattern}{17}{subsection.12.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {13}Security}{17}{section.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.1}Authentication \& Authorization}{17}{subsection.13.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.2}Transport Security}{17}{subsection.13.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.3}Rate Limiting \& DDoS Protection}{17}{subsection.13.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.4}Input Validation \& Sanitization}{17}{subsection.13.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {13.5}Secret Management}{17}{subsection.13.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {14}Deployment}{18}{section.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.1}Docker Compose}{18}{subsection.14.1}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {11}{\ignorespaces Docker Compose Service List}}{18}{lstlisting.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {14.2}Port Allocation}{18}{subsection.14.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Service Port Map}}{18}{table.caption.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {15}Conclusion}{18}{section.15}\protected@file@percent }
+\gdef \@abspage@last{20}
