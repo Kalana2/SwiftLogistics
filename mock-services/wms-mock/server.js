@@ -1,7 +1,7 @@
 const net = require('net');
 require('dotenv').config();
 
-const { createLogger } = require('../../../shared/utils/logger');
+const { createLogger } = require('../../shared/utils/logger');
 
 const logger = createLogger('wms-mock');
 
@@ -78,7 +78,7 @@ function assignWarehouse(destination) {
   };
 
   const warehouse = stateMapping[destination.state] || warehouses[0];
-  
+
   logger.info('Warehouse assigned', {
     destination: `${destination.city}, ${destination.state}`,
     warehouse: warehouse.name
@@ -92,7 +92,7 @@ function assignWarehouse(destination) {
  */
 function assignDriver(warehouseId) {
   // Find available driver at the warehouse
-  const driver = drivers.find(d => 
+  const driver = drivers.find(d =>
     d.status === 'available' && d.currentLocation === warehouseId
   );
 
@@ -106,7 +106,7 @@ function assignDriver(warehouseId) {
       });
       return anyDriver;
     }
-    
+
     throw new Error('No drivers available');
   }
 
@@ -133,13 +133,13 @@ function processMessage(message) {
   switch (type) {
     case 'ASSIGN_WAREHOUSE':
       return handleAssignWarehouse(message);
-    
+
     case 'ASSIGN_DRIVER':
       return handleAssignDriver(message);
-    
+
     case 'UPDATE_STATUS':
       return handleUpdateStatus(message);
-    
+
     default:
       return {
         success: false,
@@ -153,7 +153,7 @@ function processMessage(message) {
  */
 function handleAssignWarehouse(message) {
   const { orderId, destination } = message;
-  
+
   const warehouse = assignWarehouse(destination);
 
   assignments.set(orderId, {
@@ -177,7 +177,7 @@ function handleAssignWarehouse(message) {
  */
 function handleAssignDriver(message) {
   const { orderId, warehouseId, routeDuration } = message;
-  
+
   const driver = assignDriver(warehouseId);
 
   // Calculate pickup time (current time + prep time)
@@ -211,7 +211,7 @@ function handleAssignDriver(message) {
  */
 function handleUpdateStatus(message) {
   const { orderId, status } = message;
-  
+
   const assignment = assignments.get(orderId);
   if (assignment) {
     assignment.status = status;
@@ -257,14 +257,14 @@ const server = net.createServer((socket) => {
         if (messageStr.trim()) {
           try {
             const message = JSON.parse(messageStr);
-            
+
             logger.info('Received message', {
               type: message.type,
               orderId: message.orderId
             });
 
             const response = processMessage(message);
-            
+
             // Send response
             socket.write(JSON.stringify(response) + '\n');
 

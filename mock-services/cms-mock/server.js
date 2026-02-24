@@ -2,7 +2,7 @@ const express = require('express');
 const { XMLParser, XMLBuilder } = require('fast-xml-parser');
 require('dotenv').config();
 
-const { createLogger } = require('../../../shared/utils/logger');
+const { createLogger } = require('../../shared/utils/logger');
 
 const app = express();
 const logger = createLogger('cms-mock');
@@ -38,7 +38,7 @@ const confirmedOrders = new Map();
 app.post('/cms/soap', (req, res) => {
   try {
     const xmlBody = req.body;
-    
+
     logger.info('Received SOAP request', {
       contentLength: xmlBody.length
     });
@@ -159,7 +159,7 @@ function handleConfirmOrder(request) {
   items.forEach(item => {
     const sku = item['cms:SKU'];
     const quantity = parseInt(item['cms:Quantity']);
-    
+
     if (inventory[sku]) {
       inventory[sku].available -= quantity;
       inventory[sku].reserved += quantity;
@@ -218,7 +218,7 @@ function handleCancelOrder(request) {
     order.items.forEach(item => {
       const sku = item['cms:SKU'];
       const quantity = parseInt(item['cms:Quantity']);
-      
+
       if (inventory[sku]) {
         inventory[sku].available += quantity;
         inventory[sku].reserved -= quantity;

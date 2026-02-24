@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install-all": "npm install && npm run install:services",
-    "install:services": "cd api-gateway && npm install && cd ../orchestration-service && npm install && cd ../cms-adapter && npm install && cd ../ros-adapter && npm install && cd ../wms-adapter && npm install && cd ../notification-service && npm install && cd ../mock-services/cms-mock && npm install && cd ../../mock-services/wms-mock && npm install",
+    "install:services": "cd shared && npm install && cd ../api-gateway && npm install && cd ../orchestration-service && npm install && cd ../cms-adapter && npm install && cd ../ros-adapter && npm install && cd ../wms-adapter && npm install && cd ../notification-service && npm install && cd ../mock-services/cms-mock && npm install && cd ../../mock-services/wms-mock && npm install",
     "dev:gateway": "cd api-gateway && npm run dev",
     "dev:orchestrator": "cd orchestration-service && npm run dev",
     "dev:cms-adapter": "cd cms-adapter && npm run dev",

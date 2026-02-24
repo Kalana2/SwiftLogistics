@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { XMLParser, XMLBuilder } = require('fast-xml-parser');
-const { createLogger } = require('../../shared/utils/logger');
+const { createLogger } = require('../shared/utils/logger');
 
 const logger = createLogger('cms-soap-client');
 
@@ -141,7 +141,7 @@ class CMSClient {
       items,
       totalAmount
     );
-    
+
     const response = await this.sendSOAPRequest(envelope);
 
     // Parse response
