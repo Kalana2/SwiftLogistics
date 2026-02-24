@@ -38,7 +38,7 @@ class Logger {
   }
 
   error(message, error) {
-    const errorData = error instanceof Error
+    const errorData = error instanceof Error 
       ? { message: error.message, stack: error.stack }
       : error;
     console.error(colors.red + this._formatMessage('ERROR', message, errorData) + colors.reset);
@@ -51,8 +51,4 @@ class Logger {
   }
 }
 
-function createLogger(serviceName) {
-  return new Logger(serviceName);
-}
-
-module.exports = { Logger, createLogger };
+module.exports = Logger;
